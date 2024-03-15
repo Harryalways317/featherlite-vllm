@@ -94,6 +94,7 @@ class OpenAIServingChat(OpenAIServing):
             async def guarded_stream():
                 async for text in result_generator:
                     # Apply guardrail check
+                    logger.info(f"text: {text}")
                     raw_llm_output, validated_output, *rest = toxic_guard.parse(llm_output=text)
                     # yield the validated or fixed output
                     yield validated_output
@@ -290,14 +291,14 @@ class OpenAIServingChat(OpenAIServing):
         # assert final_res is not None
         #
         async for res in result_generator:
+            logger.info(f"res: {res}")
             if await raw_request.is_disconnected():
                 # Abort the request if the client disconnects.
                 await self.engine.abort(request_id)
                 return self.create_error_response("Client disconnected")
-            logger.info(f"res: {res}")
 
             # Apply the toxic language guardrail here
-            raw_llm_output, validated_output, *rest = toxic_guard.parse(llm_output=res.text)
+            raw_llm_output, validated_output, *rest = toxic_guard.parse(llm_output=res.outputs[0].text)
             res.text = validated_output  # Update the text with the validated output
 
             final_res = res

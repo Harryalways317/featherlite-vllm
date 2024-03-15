@@ -294,6 +294,7 @@ class OpenAIServingChat(OpenAIServing):
                 # Abort the request if the client disconnects.
                 await self.engine.abort(request_id)
                 return self.create_error_response("Client disconnected")
+            logger.info(f"res: {res}")
 
             # Apply the toxic language guardrail here
             raw_llm_output, validated_output, *rest = toxic_guard.parse(llm_output=res.text)

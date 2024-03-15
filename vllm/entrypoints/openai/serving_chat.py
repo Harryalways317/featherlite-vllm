@@ -23,7 +23,8 @@ logger = init_logger(__name__)
 
 
 toxic_guard = gd.Guard.from_string(
-    validators=[ToxicLanguage(validation_method="sentence",on_fail="fix"), IsProfanityFree(validation_method="sentence", on_fail="fix"),PIIFilter(validation_method="sentence", on_fail="fix"),DetectSecrets(validation_method="sentence", on_fail="fix")],
+    #DetectSecrets(validation_method="sentence", on_fail="fix")
+    validators=[ToxicLanguage(validation_method="sentence",on_fail="fix"), IsProfanityFree(validation_method="sentence", on_fail="fix"),PIIFilter(validation_method="sentence", on_fail="fix")],
     description="Ensure no toxic language",
 )
 

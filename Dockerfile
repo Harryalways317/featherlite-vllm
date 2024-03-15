@@ -105,8 +105,10 @@ RUN apt-get update -y \
 
 WORKDIR /workspace
 COPY requirements.txt requirements.txt
+# Install dependencies
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    python -m spacy download en_core_web_lg
 
 # Install flash attention (from pre-built wheel)
 RUN --mount=type=bind,from=flash-attn-builder,src=/usr/src/flash-attention-v2,target=/usr/src/flash-attention-v2 \
@@ -120,7 +122,8 @@ RUN --mount=type=bind,from=flash-attn-builder,src=/usr/src/flash-attention-v2,ta
 FROM vllm-base AS vllm-openai
 # install additional dependencies for openai api server
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install accelerate hf_transfer
+    pip install accelerate hf_transfer && \
+    python -m spacy download en_core_web_lg
 
 COPY --from=build /workspace/vllm/*.so /workspace/vllm/
 COPY vllm vllm
